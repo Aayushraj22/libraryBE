@@ -6,7 +6,9 @@ import { rateModal } from "../rates/rate.modal.js"
 const bookController =  {
 
     getAllBooks: async (req, res, next) => {
-        const allBooks = await tryCatch(bookModal.allBooks, next)
+        const {page} = req.query
+
+        const allBooks = await tryCatch(() => bookModal.allBooks(page), next)
 
         if(allBooks)
             res.status(200).send(allBooks)

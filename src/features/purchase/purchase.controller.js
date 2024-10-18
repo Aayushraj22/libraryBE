@@ -52,6 +52,17 @@ const purchaseController = {
         if(status){
             res.status(200).send('purchase deleted successfully')
         }
+    },
+
+    purchasedBookListOfUser: async (req,res,next) => {
+        const {userId} = req.query;
+
+        const purchaseList = await tryCatch(() => purchaseModal.purchasedBookList(userId), next)
+
+        // console.log('purchaseList: ',purchaseList)
+
+        if(purchaseList)
+            res.status(200).send(purchaseList);
     }
 }
 

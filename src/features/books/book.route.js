@@ -6,7 +6,7 @@ import purchaseRouter from '../purchase/purchase.route.js'
 
 const router = Router()
 
-// BOOKS ROUTE
+// BOOKS ROUTE : 'api/v1/books'
 
 router.route('/')
 .get(bookController.getAllBooks)    // GET ALL BOOKS

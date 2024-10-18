@@ -1,11 +1,17 @@
-import { generateToken } from "../../utility.js";
+import { generateToken, tryCatch } from "../../utility.js";
 import usersModal from "./users.modal.js";
 
 const usersController = {
 
-    healthyUser: (req,res) =>  {
-        console.log('user healthy called')
-        res.status(200).send('healthy user')
+    getUserById: async (req, res) => {
+        const {id} = req.params  // user's Id
+
+        try {
+            const user =  await usersModal.userById(id)
+            res.status(200).send(user)
+        } catch (error) {
+            res.status(404).send('User Not Found')
+        }
     },
 
     getAllUser: async (req,res) => {
@@ -51,7 +57,7 @@ const usersController = {
         const validation = usersModal.validateUserData(data);
         
         if(!validation.status){
-            return res.status(404).send(validation.msg);
+            return res.status(400).send(validation.msg);
         }
 
         try {
@@ -66,7 +72,8 @@ const usersController = {
 
 
             // set the cookie named 'token'
-            res.cookie('token', token, {maxAge: 1800000})   // 30 
+            res.cookie('token', token, { maxAge: 1800000})   // 30 min 
+            res.cookie('uid', verify.user.id )
             res.status(200).send('login success')
 
         } catch (error) {
@@ -77,6 +84,7 @@ const usersController = {
 
     signOut: async (req, res) => {
         res.clearCookie('token')
+        res.clearCookie('uid')
         res.status(200).send('logout successfully')
     }
 }

@@ -4,162 +4,95 @@ import { getUUIDMethod } from "../../utility.js";
 
 
 let books = [
-
   {
-    "name": "Moby-Dick",
-    "author": "Herman Melville",
-    "price": "$11.99",
-    "publishedAt": 1851,
-    "description": "A novel about the voyage of the whaling ship Pequod.",
-    "imgurl": "https://th.bing.com/th/id/OIP.qJq9h2JR_kqXCiZMu3JKMQHaLx?w=187&h=298&c=7&r=0&o=5&dpr=1.5&pid=1.7",
-    "ratings": {},
-  },
-  {
-    "name": "War and Peace",
-    "author": "Leo Tolstoy",
-    "price": "$14.99",
-    "publishedAt": 1869,
-    "description": "A novel that chronicles the history of the French invasion of Russia.",
-    "imgurl": "https://th.bing.com/th/id/OIP.IKbBafS4bOtZfBvnryGzzAHaLe?w=187&h=291&c=7&r=0&o=5&dpr=1.5&pid=1.7",
-    "ratings": {},
-  },
-  {
-    "name": "The Catcher in the Rye",
-    "author": "J.D. Salinger",
-    "price": "$9.99",
-    "publishedAt": 1951,
-    "description": "A novel about the experiences of a young boy named Holden Caulfield.",
-    "imgurl": "https://th.bing.com/th/id/OIP.EhOg_5HJS4hDMONihBcEoQHaMP?w=115&h=183&c=7&r=0&o=5&dpr=1.5&pid=1.7",
-    "ratings": {},
-  },
-  {
-    "name": "The Hobbit",
-    "author": "J.R.R. Tolkien",
-    "price": "$10.99",
-    "publishedAt": 1937,
-    "description": "A fantasy novel and children's book about the adventures of Bilbo Baggins.",
-    "imgurl": "https://th.bing.com/th/id/OIP.3JECq-K6PyxdPt8j1fe8JQHaKD?w=187&h=254&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "name": "The Discovery of India",
+    "author": "Jawaharlal Nehru",
+    "price": "$6.99",
+    "publishedAt": 1946,
+    "description": "A comprehensive history of India written by the first Prime Minister of India.",
+    "imgurl": "https://th.bing.com/th/id/OIP.wgJADY7vfWnErV2PgYyo9QAAAA?w=187&h=272&c=7&r=0&o=5&dpr=1.5&pid=1.7",
     "ratings": {}
-  }, 
-  {
-    "id": "GDYk",
-    "name": "Fahrenheit 451",
-    "author": "Ray Bradbury",
-    "price": "$9.99",
-    "publishedAt": 1953,
-    "description": "A dystopian novel about a future society where books are banned and burned.",
-    "imgurl": "https://example.com/fahrenheit451.jpg",
-    "ratings": {},
   },
   {
-    "id": "xr78",
-    "name": "Jane Eyre",
-    "author": "Charlotte Brontë",
+    "name": "The Story of My Experiments with Truth",
+    "author": "Mahatma Gandhi",
+    "price": "$4.99",
+    "publishedAt": 1927,
+    "description": "An autobiography of Mahatma Gandhi, detailing his life and philosophy.",
+    "imgurl": "https://th.bing.com/th/id/OIP.bKem2vN6dJ6d4kmXJ7QHBgHaLZ?w=187&h=288&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
+  },
+  {
+    "name": "Gitanjali",
+    "author": "Rabindranath Tagore",
+    "price": "$3.99",
+    "publishedAt": 1910,
+    "description": "A collection of poems by Rabindranath Tagore, which won the Nobel Prize in Literature.",
+    "imgurl": "https://th.bing.com/th/id/OIP.VTBq8_0SsKhX6IP3AD8DgwHaJ4?w=186&h=248&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
+  },
+  {
+    "name": "The Argumentative Indian",
+    "author": "Amartya Sen",
+    "price": "$5.99",
+    "publishedAt": 2005,
+    "description": "A collection of essays by Nobel laureate Amartya Sen, exploring Indian history and identity.",
+    "imgurl": "https://th.bing.com/th/id/OIP.KFhoKB2EE-HCkpnqZv-vEgHaLV?w=186&h=285&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
+  },
+  {
+    "name": "Myth = Mithya: Decoding Hindu Mythology",
+    "author": "Devdutt Pattanaik",
+    "price": "$4.99",
+    "publishedAt": 2006,
+    "description": "An exploration of Hindu mythology and its relevance in modern times.",
+    "imgurl": "https://th.bing.com/th/id/OIP.u7F7Z0f6e6d02vQVhDx8ywAAAA?w=146&h=176&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
+  },
+  {
+    "name": "The Mahabharata",
+    "author": "Vyasa",
     "price": "$12.99",
-    "publishedAt": 1847,
-    "description": "A novel about the experiences of the eponymous heroine, including her growth to adulthood and her love for Mr. Rochester.",
-    "imgurl": "https://example.com/janeeyre.jpg",
-    "ratings": {},
+    "publishedAt": -400,
+    "description": "An ancient Indian epic that narrates the struggle for sovereignty between two groups of cousins.",
+    "imgurl": "https://th.bing.com/th/id/OIP.Veh0Ktk8gtGEIjjKOt9LOQHaFj?w=264&h=198&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
   },
   {
-    "id": "RkfV",
-    "name": "Brave New World",
-    "author": "Aldous Huxley",
-    "price": "$8.99",
-    "publishedAt": 1932,
-    "description": "A dystopian novel about a future world state where citizens are environmentally engineered into an intelligence-based social hierarchy.",
-    "imgurl": "https://example.com/bravenewworld.jpg",
-    "ratings": {},
-  },
-  {
-    "id": "uP89",
-    "name": "The Lord of the Rings",
-    "author": "J.R.R. Tolkien",
-    "price": "$20.99",
-    "publishedAt": 1954,
-    "description": "An epic high-fantasy novel about the quest to destroy the One Ring.",
-    "imgurl": "https://example.com/thelordoftherings.jpg",
-    "ratings": {},
-  },
-  {
-    "id": "eV9Q",
-    "name": "Animal Farm",
-    "author": "George Orwell",
-    "price": "$7.99",
-    "publishedAt": 1945,
-    "description": "A satirical allegorical novella about a group of farm animals who rebel against their human farmer.",
-    "imgurl": "https://example.com/animalfarm.jpg",
-    "ratings": {},
-  },
-  {
-    "id": "CQSo",
-    "name": "The Odyssey",
-    "author": "Homer",
-    "price": "$13.99",
-    "publishedAt": -800,
-    "description": "An ancient Greek epic poem about the journey of Odysseus.",
-    "imgurl": "https://example.com/theodyssey.jpg",
-    "ratings": {},
-  },
-  {
-    "id": "0kT4",
-    "name": "Crime and Punishment",
-    "author": "Fyodor Dostoevsky",
+    "name": "The Ramayana",
+    "author": "Valmiki",
     "price": "$11.99",
-    "publishedAt": 1866,
-    "description": "A novel about the mental anguish and moral dilemmas of an impoverished ex-student who plans to kill a pawnbroker.",
-    "imgurl": "https://example.com/crimeandpunishment.jpg",
-    "ratings": {},
+    "publishedAt": -500,
+    "description": "An ancient Indian epic that follows Prince Rama's quest to rescue his wife Sita from the demon king Ravana.",
+    "imgurl": "https://th.bing.com/th/id/OIP.s-coBGI7G8eo2Qg_q_sR3wHaJ-?w=131&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
   },
   {
-    "id": "gwNV",
-    "name": "The Brothers Karamazov",
-    "author": "Fyodor Dostoevsky",
-    "price": "$14.99",
-    "publishedAt": 1880,
-    "description": "A philosophical novel about the existential struggles of faith, doubt, and reason.",
-    "imgurl": "https://example.com/thebrotherskaramazov.jpg",
-    "ratings": {},
+    "name": "The Guide",
+    "author": "R.K. Narayan",
+    "price": "$3.99",
+    "publishedAt": 1958,
+    "description": "A novel about a tour guide who becomes a spiritual guide.",
+    "imgurl": "https://th.bing.com/th/id/OIP.5ZmTn6OykFtCB_tgh0IKcgHaL7?w=186&h=299&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
   },
   {
-    "id": "fHJZ",
-    "name": "Wuthering Heights",
-    "author": "Emily Brontë",
-    "price": "$10.99",
-    "publishedAt": 1847,
-    "description": "A novel about the intense and almost demonic love between Catherine Earnshaw and Heathcliff.",
-    "imgurl": "https://example.com/wutheringheights.jpg",
-    "ratings": {},
+    "name": "A Suitable Boy",
+    "author": "Vikram Seth",
+    "price": "$9.99",
+    "publishedAt": 1993,
+    "description": "A novel that follows the lives of four families in post-independence India.",
+    "imgurl": "https://th.bing.com/th/id/OIP.bbYDt6BVvVpzx0gxh1fE8AAAAA?w=183&h=282&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
   },
   {
-    "id": "5qJi",
-    "name": "The Divine Comedy",
-    "author": "Dante Alighieri",
-    "price": "$15.99",
-    "publishedAt": 1320,
-    "description": "An epic poem about the journey of Dante through Hell, Purgatory, and Paradise.",
-    "imgurl": "https://example.com/thedivinecomedy.jpg",
-    "ratings": {},
-  },
-  {
-    "id": "GZn2",
-    "name": "The Iliad",
-    "author": "Homer",
-    "price": "$13.99",
-    "publishedAt": -750,
-    "description": "An ancient Greek epic poem about the Trojan War.",
-    "imgurl": "https://example.com/theiliad.jpg",
-    "ratings": {},
-  },
-  {
-    "id": "kHHY",
-    "name": "Les Misérables",
-    "author": "Victor Hugo",
-    "price": "$12.99",
-    "publishedAt": 1862,
-    "description": "A novel about the struggles of ex-convict Jean Valjean and his experience of redemption.",
-    "imgurl": "https://example.com/lesmiserables.jpg",
-    "ratings": {},
+    "name": "The God of Small Things",
+    "author": "Arundhati Roy",
+    "price": "$6.99",
+    "publishedAt": 1997,
+    "description": "A novel that explores the lives of fraternal twins in Kerala, India.",
+    "imgurl": "https://th.bing.com/th/id/OIP.hMOlhqxGc0mkm4kPSjnmFgHaLI?w=186&h=280&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+    "ratings": {}
   }
 ]
 
@@ -184,8 +117,29 @@ const randomUUID = getUUIDMethod(4)
 
 const bookModal = {
 
-  allBooks: async () => {
-    return await booksCollection.find({})
+  allBooks: async (page) => {
+    
+    const listSize = await booksCollection.countDocuments()
+    let list = undefined;
+
+    if(page){
+      
+      const toSkipCount = (page - 1)*10
+
+      // limit the books doc by 10 only, now only 10 books can be fetched for any range
+      list =  await booksCollection.find({}).skip(toSkipCount).limit(page*10)
+    } else {  // fetch all docs of collection
+      list =  await booksCollection.find({})
+    }
+
+
+    const obj = {
+      data: list,
+      total: listSize,
+    }
+
+    // console.log('books: ',obj)
+    return obj;
   },
 
   addBook: async(book) => {
@@ -251,8 +205,8 @@ const bookModal = {
 
     // console.log('searchText: ',searchText.toLowerCase())
 
-    const searchResult =  await booksCollection.find({[searchKey]: searchText.toLowerCase()})
-
+    const searchResult =  await booksCollection.find({[searchKey]: { $regex: new RegExp(searchText, 'i') }})
+    
     return searchResult;
   }
 

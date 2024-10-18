@@ -33,14 +33,18 @@ app.use(cookieParser())
 app.use(cors({
     origin: process.env.CROSS_ORIGIN_ACCESS.split('_'),
     credentials: true,
+    sameSite: 'None'
 }))
 
 
-
+// APPLICATION IS LIVE OR NOT TESTING ROUTE
 app.get('/', (req,res) => {
     res.json({
-        status: 'healthy',
-        featuringRoutes: ['api/v1/books']
+        status: 'Live',
+        "read-doc": '/api-docs',
+        "featuringRoutes": [
+            "api/v1/books"
+        ]
     })
 })
 
@@ -61,6 +65,7 @@ app.use('/api/v1/comments', commentRouter)
 // all unknown route is handled by this function
 app.use(errorHandlerMiddleware)
 
+// my server api documentation route
 app.use('/api-docs', serve, setup(swaggerJSON));
 
 // run the server

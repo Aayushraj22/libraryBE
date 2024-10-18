@@ -1,5 +1,6 @@
 import ShortUniqueId from "short-unique-id";
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 // this method return an property (function) of instance of ShortUniqueId class, and accepting a parameter length (integer) which is passed to the constructor function
 function getUUIDMethod(length){
@@ -16,7 +17,6 @@ async function tryCatch (cb, next) {
     }
         
 }
-
 
 
 // sign a user data and returing token
@@ -40,6 +40,23 @@ function verifyToken(token) {
 function getPayload(token) {
     return jwt.verify(token.process.env.SECRET_KEY)
 }
+
+
+// hash password
+function encryptText(plainText) {
+    const saltRounds = 10;
+
+    // Technique 1 (generate a salt and hash on separate function calls):
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hash = bcrypt.hashSync(plainText, salt);  
+    return hash
+}
+
+// check password
+function verifyEncryptedText(plainText, hash){
+    return bcrypt.compareSync(plainText, hash);
+}
+
 
 
 class Heap {
@@ -134,6 +151,4 @@ function getTop5Books(bookList, propertyToFilterOn){
 
 
 
-export {tryCatch, getUUIDMethod, generateToken, verifyToken, getPayload, getTop5Books}
-// const randomUUID  = getUUIDMethod(5)
-// console.log('randomeuuid: ',randomUUID())
+export {tryCatch, getUUIDMethod, generateToken, verifyToken, getPayload, getTop5Books, verifyEncryptedText, encryptText}

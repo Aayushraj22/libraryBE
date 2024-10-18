@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import AppError from '../../middleware/errorHandler.middleware.js';
-import {getUUIDMethod} from '../../utility.js'
+import {getUUIDMethod, verifyEncryptedText} from '../../utility.js'
 
 const randomUUID = getUUIDMethod(5)
 
@@ -31,24 +31,28 @@ const usersModal = {
         return await usersCollection.find({});
     },
 
+    userById: async (id) => {
+
+        let user = await usersCollection.findOne({id})
+
+        if(!user){
+            throw new Error();
+        }
+
+        return user
+    },
+
     verifyUser: async (data) => {
         const {email, password} = data;
 
         // find the user by email
         const user = await usersCollection.findOne({email})
 
-        if(!user){
+        if(!user || !verifyEncryptedText(password, user?.password)){
             return {
                 status: false,
-                msg: 'Invalid email',
+                msg: 'Invalid Credentials',
             };
-        }
-
-        if(user.password !== password) {
-            return {
-                status: user.password === password,
-                msg: 'Wrong Password',
-            } 
         }
 
         return {
@@ -96,6 +100,9 @@ const usersModal = {
 
     addUser: async (userdata) => {
         userdata.id = randomUUID()
+        
+        // hashed password
+        userdata.password =  encryptText(userdata.password)
         
         const doc = new usersCollection({...userdata})
         await doc.save()
