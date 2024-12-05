@@ -12,12 +12,11 @@ const isAuthenticUserMiddleware = (req,res,next) => {
     // verify the token
     const obj = verifyToken(token);
     
-
     if(obj.errMsg){
-        return res.status(400).send(obj.errMsg)
+        return res.status(401).send(obj.errMsg)
     }
 
-    // if not above run the obj contains payload
+    // if none of the above run then obj contains payload
     req.userId = obj.userId;
 
     next()

@@ -1,15 +1,12 @@
 import express from 'express'
-import rateRouter from './src/features/rates/rate.route.js'
-import bookRouter from './src/features/books/book.route.js'
-import commentRouter from './src/features/comment/comment.route.js'
 import { errorHandlerMiddleware } from './src/middleware/errorHandler.middleware.js';
 import {serve, setup} from 'swagger-ui-express';
 import {swaggerJSON} from './swagger.js';
-import userRouter from './src/features/users/users.route.js'
 import cors from 'cors'
 import connectToDB from './mongoDB.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import globalRouter from './globalRouter.js'
 
 // configuring env variable accessiblity across application
 dotenv.config()
@@ -48,18 +45,7 @@ app.get('/', (req,res) => {
     })
 })
 
-// books route
-app.use('/api/v1/books', bookRouter)
-
-// user route
-app.use('/api/v1/users', userRouter)
-
-//  ------   PROTECTED ROUTES   ---------  //
-// rating route
-app.use('/api/v1/rates', rateRouter)
-
-// comment route
-app.use('/api/v1/comments', commentRouter)
+app.use('/api/v1', globalRouter)
 
 
 // all unknown route is handled by this function

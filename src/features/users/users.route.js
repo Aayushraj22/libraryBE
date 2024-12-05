@@ -3,7 +3,7 @@ import usersController from './users.controller.js'
 import { userPurchaseRouter } from '../purchase/purchase.route.js'
 import { isAuthenticUserMiddleware } from '../../middleware/userMiddleware.js'
 
-const {registerUser, loginUser, signOut, getUserById} = usersController
+const {registerUser, loginUser, signOut, getUserById, userLoginStatus} = usersController
 const router = Router()
 
 // ALL USER, BUT NOT BE USED GENERALLY
@@ -13,10 +13,6 @@ router.route('/')
 // OWNED BOOKS ROUTE
 router.use('/myBooks', userPurchaseRouter)
 
-// RETURN A USER SEARCHED BY ID
-router.route('/:id')
-.get(isAuthenticUserMiddleware ,getUserById)
-
 // ADD NEW USER
 router.route('/register')
 .post(registerUser)
@@ -25,9 +21,18 @@ router.route('/register')
 router.route('/login')
 .post(loginUser)
 
+// USER AUTH STATUS
+router.route('/auth-status')
+.get(userLoginStatus)
+
 // LOGOUT USER
 router.route('/logout')
 .get(signOut)
+
+// RETURN A USER SEARCHED BY ID
+router.route('/:id')
+.get(isAuthenticUserMiddleware ,getUserById)
+
 
 
 export default router;

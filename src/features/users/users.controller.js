@@ -1,4 +1,4 @@
-import { generateToken, tryCatch } from "../../utility.js";
+import { generateToken, tryCatch, verifyToken } from "../../utility.js";
 import usersModal from "./users.modal.js";
 
 const usersController = {
@@ -74,11 +74,45 @@ const usersController = {
             // set the cookie named 'token'
             res.cookie('token', token, { maxAge: 1800000})   // 30 min 
             res.cookie('uid', verify.user.id )
-            res.status(200).send('login success')
+            res.status(200).json({status: 'success Login', uid: verify.user.id})
 
         } catch (error) {
             console.log('login error: ',error)
             return res.status(500).send('database error')
+        }
+    },
+
+    userLoginStatus: async (req,res) => {
+
+        // check for the cookie
+        const token = req?.cookies?.token
+
+        if(!token) {
+            return res.status(401).json({
+                status: 'unauthorized',
+            })
+        }
+
+        // in token presence
+        // verify the token
+        const obj = verifyToken(token);
+        
+        if(obj.errMsg){
+            return res.status(401).json({
+                status: 'unauthorized',
+            })
+        }
+        
+        // if none of the above run then obj contains payload
+        
+        if(obj.uid === req.uid) {
+            res.status(200).json({
+                status: 'authorized',
+            })
+        } else {
+            res.status(401).json({
+                status: 'unauthorized'
+            })
         }
     },
 
