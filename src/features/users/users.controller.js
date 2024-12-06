@@ -88,7 +88,7 @@ const usersController = {
         const token = req?.cookies?.token
 
         if(!token) {
-            return res.status(401).json({
+            return res.status(200).json({
                 status: 'unauthorized',
             })
         }
@@ -98,7 +98,7 @@ const usersController = {
         const obj = verifyToken(token);
         
         if(obj.errMsg){
-            return res.status(401).json({
+            return res.status(200).json({
                 status: 'unauthorized',
             })
         }
@@ -110,7 +110,7 @@ const usersController = {
                 status: 'authorized',
             })
         } else {
-            res.status(401).json({
+            res.status(200).json({
                 status: 'unauthorized'
             })
         }
