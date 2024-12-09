@@ -37,8 +37,8 @@ const bookModal = {
       
       const toSkipCount = (page - 1)*10
 
-      // limit the books doc by 10 only, now only 10 books can be fetched for any range
-      list =  await booksCollection.find({}).skip(toSkipCount).limit(page*10)
+      // limit the books doc by 10 only, now only 10 books can be fetched from any starting point
+      list =  await booksCollection.find({}).skip(toSkipCount).limit(10)
     } else {  // fetch all docs of collection
       list =  await booksCollection.find({})
     }
