@@ -4,8 +4,8 @@ import AppError from "../../middleware/errorHandler.middleware.js";
 
 const purchaseSchema = new mongoose.Schema({
     // _id: {type: String},
-    paid: {type: String, require: true},
-    price: {type: String, required: true},
+    paid: {type: Number, require: true},
+    price: {type: Number, required: true},
     bookId: {type: String, required: true},
     userId: {type: String, required: true},
     pType: {type: String, required: true},

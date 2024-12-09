@@ -11,7 +11,7 @@ const bookSchema = new Schema({
     required: true,
     ref: 'Authors',
   }],
-  price: {type: String, required: true},
+  price: {type: Number, required: true},
   publishedAt: {type: Number, required: true},
   description: {type: String, required: true},
   imgurl: {type: String, required: true},

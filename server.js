@@ -30,7 +30,8 @@ app.use(cookieParser())
 app.use(cors({
     origin: process.env.CROSS_ORIGIN_ACCESS.split('_'),
     credentials: true,
-    sameSite: 'None'
+    sameSite: 'None',
+    methods: ["GET", "POST"],
 }))
 
 
