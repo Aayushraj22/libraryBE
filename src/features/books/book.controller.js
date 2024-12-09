@@ -56,12 +56,12 @@ const bookController =  {
         }
     },
 
-    searchBook: async (req, res) => {
+    searchBook: async (req, res, next) => {
         let {searchText} = req.query
 
         searchText = searchText.trim().split('%20').join(' ')
         
-        const searchResult = await tryCatch(() => bookModal.searchBook(searchText))
+        const searchResult = await tryCatch(() => bookModal.searchBook(searchText), next)
 
         res.status(200).send(searchResult)
     },
