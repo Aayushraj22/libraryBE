@@ -72,8 +72,8 @@ const usersController = {
 
 
             // set the cookie named 'token'
-            res.cookie('token', token, { maxAge: 1800000})   // 30 min 
-            res.cookie('uid', verify.user.id )
+            res.cookie('token', token, { maxAge: 1800000, sameSite: 'None', secure: true })   // 30 min 
+            res.cookie('uid', verify.user.id, {maxAge: 1800000, sameSite: 'None', secure: true} )
             res.status(200).json({status: 'success Login', uid: verify.user.id})
 
         } catch (error) {
