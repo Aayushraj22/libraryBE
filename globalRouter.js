@@ -5,6 +5,7 @@ import rateRouter from './src/features/rates/rate.route.js'
 import bookRouter from './src/features/books/book.route.js'
 import commentRouter from './src/features/comment/comment.route.js'
 import authorRouter from './src/features/author/author.route.js'
+import wishRouter from './src/features/wish/wish.route.js'
 
 const router = Router()
 
@@ -23,5 +24,8 @@ router.use('/comments', commentRouter)
 
 // author route
 router.use('/author', authorRouter)
+
+// wish route
+router.use('/wish', wishRouter)
 
 export default router

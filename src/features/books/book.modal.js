@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import AppError from "../../middleware/errorHandler.middleware.js";
 import { getUUIDMethod } from "../../utility.js";
+import { authorCollection } from "../author/author.modal.js";
 
 
 const bookSchema = new Schema({
@@ -55,6 +56,15 @@ const bookModal = {
 
   addBook: async(book) => {
     book.id = randomUUID()
+
+    // const author = new authorCollection({
+    //   name: book.authors
+    // })
+
+    // only if not already present
+    // author.save()
+
+    // if present the add current book into that author book fiels 
 
     const doc = new booksCollection(book);
     const addedBook = await doc.save()

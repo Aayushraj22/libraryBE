@@ -16,43 +16,42 @@ const schema = new Schema({
 
 })
 
-const author = mongoose.model('authors', schema)
+export const authorCollection = mongoose.model('authors', schema)
 
 export default class AuthorModal {
+    
+    constructor() {
+        this.collection = new authorCollection();
+    }
 
-    async add (dataObj) {
-        const doc = new author(dataObj)
+    createNewAuthor = (data) => {
+        return new this.collection(data);
+    } 
+
+    addAuthor = async (dataObj) => {
+        const doc = this.collection(dataObj)
         const result = await doc.save()
+        return result
     }
 
-    async delete (id) {
-        const deletedDoc = await findOneAndDelete({id})
+    deleteAuthor = async (id) => {
+        const response = await findOneAndDelete({id})
 
-        if(!deletedDoc) { 
-            throw new AppError(404, 'author not found!')
-        }
-
-        return true;
+        return response?.modifiedCount
     }
 
-    async update (id, updatedObj) {
-        const updatedDoc = await findOneAndUpdate({id}, {$set: updatedObj}, {new: true})
+    updateAuthor = async (id, updatedObj) => {
+        const updatedDoc = await findOneAndUpdate({id}, {
+            $set: updatedObj
+        }, {new: true})
 
-        if(!updatedDoc) {
-            throw new AppError(404, 'author not found')
-        }
-
-        return updatedDoc;
+        return updatedDoc.modifiedCount ? updatedDoc : 'author not present'
     }
 
-    async authorInfo (id) {
+    authorInfo = async (id) => {
         const author = await findOne({id})
 
-        if(!author){
-            throw new AppError(404, 'author not found')
-        }
-
-        return author;
+        return author ?? 'author not present';
     }
 }
 

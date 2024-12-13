@@ -2,13 +2,14 @@ import { tryCatch } from "../../utility.js";
 import AuthorModal from "./author.modal.js";
 
 export default class AuthorController {
+    
     constructor () {
         this.modal = new AuthorModal()
     }
 
-    async addAuthor(req, res, next) {
+    addAuthor = async (req, res, next)  => {
         const author = req.body
-
+        
         const authorDoc = await tryCatch(() => this.modal.add(author), next)
 
         if(authorDoc){
@@ -16,35 +17,30 @@ export default class AuthorController {
         }
     }
 
-    async updateAuthor (req,res,next) {
+    updateAuthor = async (req,res,next) => {
         const updateObj = req.body
         const {id} = req.params
 
-        const updatedDoc = await tryCatch(() => this.update(id, updateObj), next)
+        const response = await tryCatch(() => this.update(id, updateObj), next)
 
-        if(updatedDoc){
-            res.status(200).send(updatedDoc)
-        }
+        res.status(200).send(response)
     }
 
-    async deleteAuthor (req,res,next) {
+    deleteAuthor = async (req,res,next) => {
         const {id} = req.params
 
         const response = await tryCatch(() => this.deleteAuthor(id), next)
 
-        if(response) {
-            console.log('response : ',response)
-            res.status(200).send('deletion success')
-        }
-
+        // console.log('response : ',response)
+        res.status(200).send(response ? 'author deleted' : 'author not present')
     }
 
-    async getAuthor (req, res, next) {
+
+    getAuthor = async (req, res, next) => {
         const {id} = req.params
         const author = await tryCatch(() => this.getAuthor(id), next)
 
-        if(author) {
-            res.status(200).send(author)
-        }
+        res.status(200).send(author)
     }
+
 }

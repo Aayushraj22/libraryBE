@@ -9,7 +9,7 @@ function getUUIDMethod(length){
 }
 
 async function tryCatch (cb, next) {
-
+    
     try {
         return await cb()
     } catch (error) {
