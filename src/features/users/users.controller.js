@@ -117,8 +117,8 @@ const usersController = {
     },
 
     signOut: async (req, res) => {
-        res.clearCookie('token')
-        res.clearCookie('uid')
+        res.clearCookie('token', {sameSite: 'None'})
+        res.clearCookie('uid', {sameSite: 'None'})
         res.status(200).send('logout successfully')
     }
 }

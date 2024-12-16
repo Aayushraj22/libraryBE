@@ -9,7 +9,7 @@ const wishCtr = new WishController()
 router.route('/')
 .post(isAuthenticUserMiddleware, wishCtr.addWishItem)
 .delete(isAuthenticUserMiddleware, wishCtr.deleteWishItem)
-.get(isAuthenticUserMiddleware, wishCtr.getWishItem)
+.get(isAuthenticUserMiddleware, wishCtr.getWishItem)    // return doc, in which wishlist field is list of book obj
 
 
 export default router

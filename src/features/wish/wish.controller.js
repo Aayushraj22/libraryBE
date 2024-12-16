@@ -13,7 +13,7 @@ export default class WishController {
 
         await tryCatch(() => this.modal.addWish(userId, bookId), next)
 
-        res.status(201).send('added book in your wish')
+        res.status(201).send('book added into your wish')
     }
 
     deleteWishItem = async (req, res, next) => {
@@ -25,6 +25,7 @@ export default class WishController {
         res.status(201).send(response ? 'deleted book from wish' : 'was absent in your wish') 
     }
 
+    // return a doc of userId, in which wishlist (array) data is populated (book object)
     getWishItem = async (req, res, next) => {
         const userId = req.cookies.uid 
 

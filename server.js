@@ -31,7 +31,6 @@ app.use(cors({
     origin: process.env.CROSS_ORIGIN_ACCESS.split('_'),
     credentials: true,
     sameSite: 'None',
-    methods: ["GET", "POST"],
 }))
 
 

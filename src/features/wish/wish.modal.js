@@ -16,7 +16,7 @@ const schema = new mongoose.Schema({
 
     wishlist: [{
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Book'
+        ref: 'books'
     }]
 })
 
@@ -64,7 +64,7 @@ export default class WishModal {
     }
 
     async getWish(userId) {
-        const response = await this.collection.findOne({userId})
+        const response = await this.collection.findOne({userId}).populate('wishlist')
         
         return response ?? 'not wished yet ?'
     }
