@@ -8,9 +8,21 @@ const schema = new Schema({
     },
     booksWritten: [{ 
         type: Schema.Types.ObjectId, 
-        ref: 'Books' 
+        ref: 'books' 
     }],
     imgurl: {
+        type: String,
+    },
+    bio: {
+        type: String,
+    },
+    age: {
+        type: String,
+    },
+    gender: {
+        type: String,
+    },
+    nationality: {
         type: String,
     },
 
@@ -21,7 +33,7 @@ export const authorCollection = mongoose.model('authors', schema)
 export default class AuthorModal {
     
     constructor() {
-        this.collection = new authorCollection();
+        this.collection = authorCollection;
     }
 
     createNewAuthor = (data) => {
@@ -29,19 +41,19 @@ export default class AuthorModal {
     } 
 
     addAuthor = async (dataObj) => {
-        const doc = this.collection(dataObj)
+        const doc = this.createNewAuthor(dataObj)
         const result = await doc.save()
         return result
     }
 
     deleteAuthor = async (id) => {
-        const response = await findOneAndDelete({id})
+        const response = await this.collection.findOneAndDelete({id})
 
         return response?.modifiedCount
     }
 
     updateAuthor = async (id, updatedObj) => {
-        const updatedDoc = await findOneAndUpdate({id}, {
+        const updatedDoc = await this.collection.findOneAndUpdate({id}, {
             $set: updatedObj
         }, {new: true})
 
@@ -49,8 +61,13 @@ export default class AuthorModal {
     }
 
     authorInfo = async (id) => {
-        const author = await findOne({id})
-
+        const author = await this.collection.findOne({_id: id}).populate({
+            path: 'booksWritten',
+            populate: {
+                path: 'authors',   
+            }
+        })
+        
         return author ?? 'author not present';
     }
 }

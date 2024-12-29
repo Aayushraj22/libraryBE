@@ -10,7 +10,7 @@ const bookSchema = new Schema({
   authors: [{
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'Authors',
+    ref: 'authors',
   }],
   price: {type: Number, required: true},
   publishedAt: {type: Number, required: true},
@@ -39,7 +39,10 @@ const bookModal = {
       const toSkipCount = (page - 1)*10
 
       // limit the books doc by 10 only, now only 10 books can be fetched from any starting point
-      list =  await booksCollection.find({}).skip(toSkipCount).limit(10)
+      list =  await booksCollection.find({}).skip(toSkipCount).limit(10).populate({
+        path: 'authors',
+        select: 'name'
+      })
     } else {  // fetch all docs of collection
       list =  await booksCollection.find({})
     }
@@ -74,7 +77,10 @@ const bookModal = {
 
   bookById: async(id) => {
     // find the book by id
-    const book = await booksCollection.findOne({id})
+    const book = await booksCollection.findOne({id}).populate({
+      path: 'authors',
+      select: 'name'
+    })
     
     if(!book) {
       throw new AppError(404, 'book not found!');
@@ -126,7 +132,10 @@ const bookModal = {
 
     // console.log('searchText: ',searchText.toLowerCase())
 
-    const searchResult =  await booksCollection.find({[searchKey]: { $regex: new RegExp(searchText, 'i') }})
+    const searchResult =  await booksCollection.find({[searchKey]: { $regex: new RegExp(searchText, 'i') }}).populate({
+      path: 'authors',
+      select: 'name',
+    })
     
     return searchResult;
   },

@@ -1,7 +1,7 @@
 import AppError from "../../middleware/errorHandler.middleware.js";
 
 import {getUUIDMethod} from '../../utility.js'
-import bookModal, { booksCollection } from "../books/book.modal.js";
+import { booksCollection } from "../books/book.modal.js";
 
 const randomUUID = getUUIDMethod(7)
 
