@@ -1,53 +1,61 @@
+import { response } from "express";
 import { tryCatch } from "../../utility.js";
-import commentsModal from "./comment.modal.js"
+import CommentsModal from "./comment.modal.js"
 
+export default class CommentsController {
+    constructor() {
+        this.modal = new CommentsModal()
+    }
 
-const commentsController = {
+    // all comments for a particulate bookId
+    getAllCommentsByBookId = async (req, res, next) => {
+        const { bookId } = req.query
+        const commentLists = await tryCatch(() => this.modal.allCommentsByBookId(bookId), next)
 
-    getAllComments: (req,res) => {
-        res.status(200).send(commentsModal.allComment());
-    },
+        if(commentLists)
+            res.status(200).send(commentLists);
+    }
 
-    getCommentById: (req,res,next) => {      //  route -> comment/:commentId
-        const {commentId} = req.params
-        const comment = tryCatch(() => commentsModal.commentById(commentId), next)
+    //  route -> comment/:commentId
+    getCommentById = async (req,res,next) => {     
+        const { commentId } = req.params
+        const response = await tryCatch(() => this.modal.commentById(commentId), next)
 
-        if(comment)
-            res.status(200).send(comment)
-    },
+        res.status(response ? 200 : 404).send(response ? response : 'comment not found')
+    }
 
-    addAComment: (req,res) => {
+    // add a new comment
+    addAComment = async (req, res, next) => {
         const comment = req.body;
+        const { bookId } = req.query
         comment.userId = req.userId;
+        comment.bookId = bookId
         
-        if(commentsModal.addComment(comment)){
-            res.status(201).send('Added Successfully')
-        } else {
-            res.status(500).send('Internal Server Error')
-        }
-    },
+        const response = await tryCatch(() => this.modal.addComment(comment), next)
 
-    updateAComment: (req,res,next) => {
+        if(response)
+            return res.status(200).send(response)
+    }
+
+    // modify the comment content
+    updateAComment = async (req,res,next) => {
+        const { commentId } = req.params;
+        const { content } = req.body;
+        const userId = req.userId
+
+        const response = await tryCatch(() => this.modal.modifyComment(userId, commentId, content), next)
+
+        res.status(response ? 200 : 404).send(response ? response : 'comment not found')
+    }
+
+    // delete existing comment
+    deleteAComment = async (req,res,next) => {
         const {commentId} = req.params;
-        const text = req.body;
+        const userId = req.userId
 
-        const comment = tryCatch(() => commentsModal.modifyComment(commentId, text), next)
+        const response = await tryCatch(() => this.modal.deleteComment(userId, commentId), next)
 
-        if(comment){
-            res.status(200).send('Updated Successfully')
-        }
-    },
-
-    deleteAComment: (req,res,next) => {
-        const {commentId} = req.params;
-
-        const comment = tryCatch(() => commentsModal.deleteComment(commentId), next)
-
-        if(comment){
-            res.status(200).send('deleted Successfully')
-        }
+        res.status(response ? 200 : 404).send(response ? 'comment deleted' : 'comment not found')
     }
 
 }
-
-export default commentsController

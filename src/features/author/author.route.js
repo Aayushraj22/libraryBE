@@ -2,12 +2,16 @@ import {Router} from 'express'
 import AuthorController from './author.controller.js'
 
 const router = Router()
-const author = new AuthorController()
+const {addAuthor, getAuthor, deleteAuthor, updateAuthor} = new AuthorController()
+
 
 router.route('/')
-.post(author.addAuthor)
-.get(author.getAuthor)
-.put(author.updateAuthor)
-.delete(author.deleteAuthor)
+.post(addAuthor)
+.get(getAuthor)
+
+router.route('/:id')
+.put(updateAuthor)
+.delete(deleteAuthor)
+
 
 export default router

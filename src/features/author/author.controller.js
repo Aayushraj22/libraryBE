@@ -22,8 +22,8 @@ export default class AuthorController {
         const {id} = req.params
 
         const response = await tryCatch(() => this.modal.updateAuthor(id, updateObj), next)
-
-        res.status(200).send(response)
+        
+        res.status(response ? 200 : 404).send(response ? response : 'author not found')
     }
 
     deleteAuthor = async (req,res,next) => {
@@ -31,17 +31,15 @@ export default class AuthorController {
 
         const response = await tryCatch(() => this.modal.deleteAuthor(id), next)
 
-        // console.log('response : ',response)
-        res.status(200).send(response ? 'author deleted' : 'author not present')
+        res.status(response ? 200 : 404).send(response ? 'author deleted' : 'author not found')
     }
 
 
     getAuthor = async (req, res, next) => {
         const {id} = req.query
-        const author = await tryCatch(() => this.modal.authorInfo(id), next)
+        const response = await tryCatch(() => this.modal.authorInfo(id), next)
 
-        if(author)
-            res.status(200).send(author)
+        res.status(response ? 200 : 404).send(response ? response : 'author not found')
     }
 
 }

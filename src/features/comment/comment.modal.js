@@ -1,63 +1,63 @@
+import mongoose, { Schema } from "mongoose";
 import AppError from "../../middleware/errorHandler.middleware.js";
-import { getUUIDMethod } from "../../utility.js";
 
-const randomUUID = getUUIDMethod(6)
 
-const commentsModal = {
-    comments: [
-        {
-            id: 'GQY7aK',
-            userId: '',
-            bookId: 'RGuP',
-            content: 'Awesom Book to read Youngester',
-        }
-    ],
-
-    allComment(){
-        return this.comments;
+const schema = new Schema({
+    bookId: {
+        type: String,
+        require: true,
     },
+    userId: {
+        type: String,
+        require: true,
+    },
+    content: {
+        type: String,
+        require: true,
+    }
+})
 
-    commentById(id){
-        const comment = this.comments.find(c => c.id === id)
+export const collection = mongoose.model('comments', schema)
 
-        if(!comment){
-            throw new AppError(404, 'Comment Not Found!');
-        }
+export default class CommentsModal {
+    constructor(){
+        this.collection = collection 
+    }
+
+    // add a comment
+    addComment = async (comment) => {
+        const doc = new this.collection(comment)
+        const result = await doc.save()
+        return result
+    }
+
+    // comment by id
+    commentById = async (id) => {
+        const comment = await this.collection.findById({_id: id})
 
         return comment;
-    },
-
-    addComment(comment){
-        comment = {
-            ...comment,
-            id: randomUUID(),
-        }
-
-        this.comments.push(comment);
-        return true;
-    },
-
-    modifyComment(id, text){
-        const cIndex = this.comments.findIndex(c => c.id === id)
-
-        if(!cIndex){
-            throw new AppError(404, 'comment not found!')
-        }
-
-        this.comments[cIndex].content = text
-        return this.comments[cIndex]; // return modified comment object
-    },
-
-    deleteComment(id){
-        const cIndex = this.comments.findIndex(c => c.id === id)
-
-        if(cIndex < 0){
-            throw new AppError(404, 'Comment Not Found!')
-        }
-
-        this.comments = this.comments.filter(c => c.id !== id)
-        return true;  // indicate deleted successfully
     }
-}
 
-export default commentsModal;
+    // return all documents in collection
+    allCommentsByBookId = async (bookId) => {
+        const list = await this.collection.find({bookId}) 
+        return list;
+    }
+
+    // user can only update their comment
+    modifyComment = async (userId, id, text) => {
+        const modifiedComment = await this.collection.findOneAndUpdate({_id: id, userId}, {
+            content: text
+        }, {new: true})
+
+        return modifiedComment; // return modified comment object
+    }
+
+    // a user can delete their comment by id
+    deleteComment = async (userId ,id) => {
+        const deletedComment = await this.collection.findOneAndDelete({_id: id, userId}, {new: true})
+
+        return deletedComment;  // return deleted comment object
+    }
+
+}

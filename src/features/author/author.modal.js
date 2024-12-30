@@ -47,28 +47,28 @@ export default class AuthorModal {
     }
 
     deleteAuthor = async (id) => {
-        const response = await this.collection.findOneAndDelete({id})
+        const response = await this.collection.findOneAndDelete({_id: id}, {new: true})
 
-        return response?.modifiedCount
+        return response
     }
 
     updateAuthor = async (id, updatedObj) => {
-        const updatedDoc = await this.collection.findOneAndUpdate({id}, {
+        const updatedDoc = await this.collection.findOneAndUpdate({_id: id}, {
             $set: updatedObj
-        }, {new: true})
-
-        return updatedDoc.modifiedCount ? updatedDoc : 'author not present'
+        }, { new: true })
+        
+        return updatedDoc 
     }
 
     authorInfo = async (id) => {
-        const author = await this.collection.findOne({_id: id}).populate({
+        const response = await this.collection.findOne({_id: id}).populate({
             path: 'booksWritten',
             populate: {
                 path: 'authors',   
             }
         })
         
-        return author ?? 'author not present';
+        return response;
     }
 }
 
