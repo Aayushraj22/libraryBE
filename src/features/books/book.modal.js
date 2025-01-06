@@ -113,29 +113,37 @@ const bookModal = {
 
   },
 
-  searchBook: async (text) => {
-    // book search directly without any flag
-    // books by author search, use flag  a:authorName
-    // books by published year search, use flag  y:authorName
-    // books by prices search, use flag p:price
+  searchBook: async (searchText) => {
 
-    // console.log('text:',text)
+    const searchResult = await booksCollection.aggregate([ 
+      { $lookup: {
+          from: 'authors', 
+          localField: 'authors', 
+          foreignField: '_id', 
+          as: 'authorDetails', 
+        }, 
+      }, 
+      // { $unwind: { 
+      //   path: '$authorDetails', 
+      //   } 
+      // }, 
+      // { $project: { _id: 1, name: 1, authors: 1, }, },
+      { $match: { 
+          $or: [ 
+            { name: { $regex: searchText, $options: 'i' } }, 
+            { 'authorDetails.name': { $regex: searchText, $options: 'i' } }, 
+          ], 
+        }, 
+      },
+      // { $group: {
+      //     _id: '$_id', 
+      //     name: { $first: '$name' }, 
+      //     authors: { $push: '$authorDetails' }, 
+      //   },
+      // }
+    ])
 
-    const searchText = text[1] === ':' ? text.slice(2) : text
-    const keyMap = {
-        'a' : 'author',
-        'y' : 'published Year',
-        'p' : 'price',
-    }
-
-    const searchKey = text[1] === ':' ? keyMap[text[0]] : 'name'
-
-    // console.log('searchText: ',searchText.toLowerCase())
-
-    const searchResult =  await booksCollection.find({[searchKey]: { $regex: new RegExp(searchText, 'i') }}).populate({
-      path: 'authors',
-      select: 'name',
-    })
+    console.log('result length : ',searchResult.length)
     
     return searchResult;
   },

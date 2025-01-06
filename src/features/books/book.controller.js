@@ -59,9 +59,10 @@ const bookController =  {
     searchBook: async (req, res, next) => {
         let {searchText} = req.query
 
-        searchText = searchText.trim().split('%20').join(' ')
+        searchText = searchText.trim().toLowerCase().split('%20').join(' ')
         
         const searchResult = await tryCatch(() => bookModal.searchBook(searchText), next)
+        // console.log('search result: ',searchResult)
 
         res.status(200).send(searchResult)
     },

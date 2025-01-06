@@ -19,7 +19,10 @@ const usersController = {
             const allUser = await usersModal.allUser()
             res.status(200).send(allUser)
         } catch (error) {
-            res.status(500).send('server Error')
+            res.status(500).json({
+                status: 500,
+                message: 'Internal server error'
+            })
         }
     },
 
@@ -30,23 +33,33 @@ const usersController = {
         const validation = usersModal.validateUserData(data, 'register');
         
         if(!validation.status){
-            return res.status(404).send(validation.msg);
+            return res.status(400).json({
+                status: 400,
+                message: validation.msg
+            })
         }
         
         try {
             // checking for unique email address
             const user = await usersModal.uniqueUserByEmail(data.email)
             if(user){
-                return res.status(400).send('Email already used')
+                return res.status(400).json({
+                    status: 400,
+                    message: 'Email already used'
+                })
             }
-
+            
             // add user data
             const doc = await usersModal.addUser(data)
+
             res.status(201).send(doc)
             
         } catch (error) {
-            console.log(error)
-            res.status(500).send('Database error')
+            // console.log(error)
+            res.status(500).json({
+                status: 500,
+                message: 'Internal server error'
+            })
         }
     },
 
@@ -57,7 +70,10 @@ const usersController = {
         const validation = usersModal.validateUserData(data);
         
         if(!validation.status){
-            return res.status(400).send(validation.msg);
+            return res.status(400).json({
+                status: 400,
+                message: validation.msg
+            });
         }
 
         try {
@@ -65,7 +81,10 @@ const usersController = {
             const verify = await usersModal.verifyUser(data)
 
             if(!verify.status){
-                return res.status(400).send(verify.msg);
+                return res.status(400).json({
+                    status: 400,
+                    message: verify.msg
+                });
             }
 
             const token = generateToken({userId: verify.user.id})
@@ -74,11 +93,18 @@ const usersController = {
             // set the cookie named 'token'
             res.cookie('token', token, { maxAge: 1800000, sameSite: 'None', secure: true })   // 30 min 
             res.cookie('uid', verify.user.id, {maxAge: 1800000, sameSite: 'None', secure: true} )
-            res.status(200).json({status: 'success Login', uid: verify.user.id})
+            res.status(200).json({
+                status: 200, 
+                message: 'success Login', 
+                uid: verify.user.id,
+            })
 
         } catch (error) {
-            console.log('login error: ',error)
-            return res.status(500).send('database error')
+            // console.log('login error: ',error)
+            return res.status(500).json({
+                status: 500,
+                message: 'Internal server error'
+            })
         }
     },
 
@@ -88,8 +114,9 @@ const usersController = {
         const token = req?.cookies?.token
 
         if(!token) {
-            return res.status(200).json({
-                status: 'unauthorized',
+            return res.status(401).json({
+                status: 401,
+                message: 'unAuthorized',
             })
         }
 
@@ -97,21 +124,21 @@ const usersController = {
         // verify the token
         const obj = verifyToken(token);
         
-        if(obj.errMsg){
-            return res.status(200).json({
-                status: 'unauthorized',
-            })
+        if(obj.status === 401 || obj.status === 500){
+            return res.status(401).json({...obj})
         }
         
         // if none of the above run then obj contains payload
         
         if(obj.uid === req.uid) {
             res.status(200).json({
-                status: 'authorized',
+                status: 200,
+                message: 'authorized',
             })
         } else {
-            res.status(200).json({
-                status: 'unauthorized'
+            res.status(401).json({
+                status: 401,
+                message: 'unAuthorized'
             })
         }
     },

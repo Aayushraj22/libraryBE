@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import AppError from '../../middleware/errorHandler.middleware.js';
-import {getUUIDMethod, verifyEncryptedText} from '../../utility.js'
+import {encryptText, getUUIDMethod, verifyEncryptedText} from '../../utility.js'
 
 const randomUUID = getUUIDMethod(5)
 
@@ -48,6 +48,7 @@ const usersModal = {
         // find the user by email
         const user = await usersCollection.findOne({email})
 
+
         if(!user || !verifyEncryptedText(password, user?.password)){
             return {
                 status: false,
@@ -63,22 +64,22 @@ const usersModal = {
 
     validateUserData(data, authType) {
         //user should provide the name, email, password, username
-        const {name, username, email, password} = data;
+        const {name, email, password} = data;
 
         if(!email){
             return {
                 status: false,
-                msg: 'please provide Email address',
+                msg: 'please provide Email',
             }
         } else if(!password) {
             return {
                 status: false,
-                msg: 'please provide password'
+                msg: 'please provide Password'
             }
         } else if(authType==='register' && !name) {
             return {
                 status: false,
-                msg: 'please provide your name'
+                msg: 'please provide your Name'
             }
         }
 
@@ -105,9 +106,9 @@ const usersModal = {
         userdata.password =  encryptText(userdata.password)
         
         const doc = new usersCollection({...userdata})
-        await doc.save()
+        const userData = await doc.save()
 
-        return userdata;    // RETURN THE NEW USER DATA
+        return userData;    // RETURN THE NEW USER DATA
     },
 
     modifyUser: async (userId, modifiedObj) => {

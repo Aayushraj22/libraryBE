@@ -31,8 +31,16 @@ function verifyToken(token) {
         const payload = jwt.verify(token, process.env.SECRET_KEY)
         return payload;
     } catch (error) {
+        if(error.message === 'Network Error') {
+            return {
+                status: 500,
+                message: error.message
+            }
+        } 
+
         return {
-            errMsg: error.name || 'Invalid token'
+            status: 401,
+            message: 'Invalid token'
         }
     }
 }

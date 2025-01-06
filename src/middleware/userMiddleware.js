@@ -6,8 +6,8 @@ const isAuthenticUserMiddleware = (req,res,next) => {
 
     if(!token) {
         return res.status(401).json({
-            statusCode: 401,
-            status: 'UnAuthorised Access'
+            status: 401,
+            message: 'unAuthorized '
         })
     }
 
@@ -15,11 +15,8 @@ const isAuthenticUserMiddleware = (req,res,next) => {
     // verify the token
     const obj = verifyToken(token);
     
-    if(obj.errMsg){
-        return res.status(401).json({
-            statusCode: 401,
-            status: obj.errMsg
-        })
+    if(obj.status === 500 || obj.status === 401){
+        return res.status(401).json({...obj})
     }
 
     // if none of the above run then obj contains payload
