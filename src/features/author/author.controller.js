@@ -34,12 +34,22 @@ export default class AuthorController {
         res.status(response ? 200 : 404).send(response ? 'author deleted' : 'author not found')
     }
 
-
+    // return an individual author by id
     getAuthor = async (req, res, next) => {
-        const {id} = req.query
+        const {id} = req.params
         const response = await tryCatch(() => this.modal.authorInfo(id), next)
 
         res.status(response ? 200 : 404).send(response ? response : 'author not found')
+    }
+
+    // return a list of author
+    authorList = async (req, res, next) => {
+        const {page} = req.query
+
+        const response = await tryCatch(() => this.modal.authorList(page), next)
+
+        if(response)
+            res.status(200).send(response)
     }
 
 }

@@ -70,5 +70,17 @@ export default class AuthorModal {
         
         return response;
     }
+
+    authorList = async (pageNo) => {
+        const noOfDocToSkip = (pageNo - 1) * 10
+        const response = await this.collection.find().skip(noOfDocToSkip).limit(10)
+
+        const totalDocs = await this.collection.countDocuments()
+
+        return {
+            data: response,
+            total: totalDocs
+        }
+    }
 }
 
