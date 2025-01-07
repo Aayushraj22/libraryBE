@@ -123,11 +123,11 @@ const bookModal = {
           as: 'authorDetails', 
         }, 
       }, 
-      // { $unwind: { 
-      //   path: '$authorDetails', 
-      //   } 
-      // }, 
-      // { $project: { _id: 1, name: 1, authors: 1, }, },
+      { $unwind: { 
+        path: '$authorDetails', 
+        preserveNullAndEmptyArrays: true // Ensures books without authors are retained
+        } 
+      }, 
       { $match: { 
           $or: [ 
             { name: { $regex: searchText, $options: 'i' } }, 
@@ -135,15 +135,20 @@ const bookModal = {
           ], 
         }, 
       },
-      // { $group: {
-      //     _id: '$_id', 
-      //     name: { $first: '$name' }, 
-      //     authors: { $push: '$authorDetails' }, 
-      //   },
-      // }
+      { $group: {
+          _id: '$_id', 
+          name: { $first: '$name' }, 
+          publishedAt: {$first: '$publishedAt'},
+          price: {$first: '$price'},
+          description: {$first: '$description'},
+          imgurl: {$first: '$imgurl'},
+          ratings: {$first: '$ratings'},
+          authors: { $push: '$authorDetails' }, 
+        },
+      }
     ])
 
-    console.log('result length : ',searchResult.length)
+    // console.log('result length : ',searchResult.length)
     
     return searchResult;
   },
