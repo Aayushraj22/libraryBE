@@ -66,6 +66,12 @@ function verifyEncryptedText(plainText, hash){
 }
 
 
+function swapElement(i, j, list) {
+    let temp = list[i]
+    list[i] = list[j]
+    list[j] = temp
+}
+
 
 class Heap {
     
@@ -76,75 +82,81 @@ class Heap {
         this.list = list
     }
     
-    heapify(obj){
+    // min heap of size 5 so, that we get 5 max element in ascending order
+    heapifyBottomToTop(obj){
         let childIndex = this.store.length;
         
-        let parentIndex = Math.ceil((childIndex - 2) / 2);
+        let parentIndex = Math.floor((childIndex - 1) / 2);
         
-        while(parentIndex >= 0 && obj[this.filterOn] < this.store[parentIndex][this.filterOn]){
+        while(childIndex > 0 && obj.ratingCount < this.store[parentIndex].ratingCount){
             
             this.store[childIndex] = {
                 ...this.store[parentIndex]
             }
             
             childIndex = parentIndex;
-            parentIndex = Math.ceil((childIndex - 2) / 2);
+            parentIndex = Math.floor((childIndex - 1) / 2);
         }
         
         this.store[childIndex] = { ...obj };
-        
+
     }
     
-    actualHeapify(list, size, index) {
+    heapifyTopToBottom(list, size, index) {
         let smallestIndex = index;
         let leftChildIndex = index*2 + 1;
         let rightChildIndex = index*2 + 2;
         
-        if(leftChildIndex < size && list[smallestIndex][this.filterOn] > list[leftChildIndex][this.filterOn]) {
+        if(leftChildIndex < size && list[smallestIndex].ratingCount > list[leftChildIndex].ratingCount) {
             smallestIndex = leftChildIndex
         }
         
-        if(rightChildIndex < size && list[smallestIndex][this.filterOn] > list[rightChildIndex][this.filterOn]) {
+        if(rightChildIndex < size && list[smallestIndex].ratingCount > list[rightChildIndex].ratingCount) {
             smallestIndex = rightChildIndex;
         }
         
         if(smallestIndex !== index) {
-            [list[smallestIndex], list[index]] = [list[index], list[smallestIndex]]
-            this.actualHeapify(list, size, smallestIndex);
+            // [list[smallestIndex], list[index]] = [list[index], list[smallestIndex]]
+            swapElement(smallestIndex, index, list)
+            this.heapifyTopToBottom(list, size, smallestIndex);
         }
     }
     
     heapsort(list) {
         let length = list.length;
-        for(let i=length-1; i>0; i--) {
-            [list[i], list[0]] = [list[0], list[i]]
+        let i = length - 1
+
+        while( i>0) {
+            // [list[i], list[0]] = [list[0], list[i]]
+            swapElement(i, 0, list)
             length -- ;
             
-            this.actualHeapify(list, length, 0)
+            this.heapifyTopToBottom(list, length, 0)
+            i--;
         }
         
         return list;
     }
     
     top5Books() {
+
+        // console.log('bookList: ',this.list, 'length : ',this.list.length) 
+
         for(let book of this.list) {
             
             if(this.store.length === this.capacity) {
-                if(this.store[0][this.filterOn] < book[this.filterOn]) {
-                    this.store.shift()
-                    this.actualHeapify(this.store, this.store.length, 0)
+                if(this.store[0].ratingCount < book.ratingCount) {
+                    this.store[0] = { ...book }
+                    this.heapifyTopToBottom(this.store, this.store.length, 0)
                 } else 
                     continue;
-            } 
-            
-            this.heapify(book)
+            } else 
+                this.heapifyBottomToTop(book)
         }
-        
-        const heapList = this.store
+
         const sortedList = this.heapsort(this.store)
-        
+
         return sortedList;
-        return heapList
     }
     
     

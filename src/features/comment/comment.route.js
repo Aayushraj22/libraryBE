@@ -10,13 +10,13 @@ const {getCommentById, addAComment, updateAComment, deleteAComment, getAllCommen
 router.route('/')
 .get(getAllCommentsByBookId)      // RETURN LIST OF COMMENTS
 
-// route 'domain/api/v1/comment/:commentId'
+// route 'domain/api/v1/comments/:commentId'
 router.route('/:commentId')
 .get(getCommentById)        // RETURN A COMMENT BY ID
 .put(isAuthenticUserMiddleware, updateAComment)        // UPDATE THE COMMENT BY ID
 .delete(isAuthenticUserMiddleware, deleteAComment)     // DELETE THE COMMENT BY ID
 
-// route 'domain/api/v1/comment/add'
+// route 'domain/api/v1/comments/add'
 router.route('/add')
 .post(isAuthenticUserMiddleware, addAComment)      // ADD A NEW COMMENT
 

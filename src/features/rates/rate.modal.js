@@ -11,12 +11,17 @@ const rateModal = {
     allRating: async () => {
         const booksList = await booksCollection.find({})
         const rating = booksList.map(book => {
-            const ratingCount = Array.from(book.ratings.keys()).length
+            const ratingsList =  Array.from(book.ratings.values())
+            const sumRatings =  ratingsList.reduce((total, val) => { 
+                return total += Number(val)
+            }, 0)
+
+            const rating = ratingsList.length ? Math.ceil(sumRatings / ratingsList.length ) : 0
 
             return {
                 bookId: book.id,
-                ratingCount,
-                ratings: book.ratings,
+                ratingCount: rating,
+                filterOn: 'rated',
             }
         })
 
