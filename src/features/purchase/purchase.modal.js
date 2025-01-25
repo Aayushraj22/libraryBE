@@ -3,13 +3,11 @@ import AppError from "../../middleware/errorHandler.middleware.js";
 
 
 const purchaseSchema = new mongoose.Schema({
-    // _id: {type: String},
-    paid: {type: Number, require: true},
-    price: {type: Number, required: true},
-    bookId: {type: String, required: true},
-    userId: {type: String, required: true},
-    pType: {type: String, required: true},
-    qty: {type: Number, required: true},
+    price: {type: Number, require: true},
+    bookId: {type: String, require: true},
+    userId: {type: String, require: true},
+    pType: {type: String, require: true},
+    qty: {type: Number, require: true},
 }, { timestamps: true })
 
 
@@ -65,6 +63,31 @@ const purchaseModal = {
         // console.log('model booklist: ',bookList)
         return bookList;
     },
+
+    purchasedBookListGroupedByBookId: async () => {
+        const purchaseList = await purchaseCollection.aggregate([
+            {
+              $group: {
+                _id: "$bookId", // Group by bookId
+                totalDocs: { $sum: 1 }, // Count documents in each group
+                total: { $sum: "$qty" }, // Sum the qty field for each group
+              },
+            },
+            {
+              $project: {
+                _id: 0, // Exclude _id from output
+                bookId: "$_id", // Rename _id to bookId
+                totalDocs: 1,
+                total: 1,
+              },
+            }, {
+                $sort: {total: -1},  // sort the list by total in descending order
+            }
+        ])
+
+        return purchaseList
+    }
+
 
 
 }

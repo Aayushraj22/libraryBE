@@ -1,6 +1,7 @@
 import { getTop5Books, tryCatch } from "../../utility.js"
 import bookModal from "./book.modal.js"
 import { rateModal } from "../rates/rate.modal.js"
+import purchaseModal from "../purchase/purchase.modal.js"
 
 
 const bookController =  {
@@ -67,23 +68,27 @@ const bookController =  {
         res.status(200).send(searchResult)
     },
 
-    top5bookByFeatures: async (req,res,next) => {
+    top5bookByFeatures: async ( req, res, next ) => {
         const {category} = req.params;
-        const rating = await rateModal.allRating()
+        
+        try {
+            if(category === 'rated'){
+                const rating = await rateModal.allRating()
+                const list =  getTop5Books(rating, 'rated')
+                res.status(200).send(list);
 
-        if(category === 'rated'){
-            const list =  getTop5Books(rating, 'rated')
-            // console.log('top 5 books: ',list)
-            
-            res.status(200).send(list);
-        } else if(category === 'selled') {
-            const list =  getTop5Books(rating, 'rated')  // rating -> purchased books
-            res.status(200).send(list);   
-        } else if(category === 'loved') {
-            // have to write
-        } else {
-            res.status(404).send('not found!')
+            } else if(category === 'selled') {
+                const purchaseList = await purchaseModal.purchasedBookListGroupedByBookId()
+                res.status(200).send(purchaseList.slice(0,5));   
+
+            } else {
+                res.status(404).send('not found!')
+            }
+        } catch (error) {
+            next(error)
         }
+
+       
     }
 
 
