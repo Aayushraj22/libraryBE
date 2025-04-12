@@ -66,7 +66,7 @@ export default class WishModal {
     async getWish(userId) {
         const response = await this.collection.findOne({userId}).populate('wishlist')
         
-        return response ?? 'not wished yet ?'
+        return response ?? []
     }
 
     // check wish exist for the user or not

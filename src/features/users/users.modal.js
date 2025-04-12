@@ -7,46 +7,57 @@ const randomUUID = getUUIDMethod(5)
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        require: true,
     }, 
     email: {
         type: String,
-        required: true,
+        require: true,
     },
     password: {
         type: String,
-        required: true,
+        require: true,
     },
     id: {
         type: String,
-        required: true,
+        require: true,
     },
 })
 
 export const usersCollection = mongoose.model('users', userSchema)
 
-const usersModal = {
+export default class UserModel {
+    constructor() {
+        this.coll = usersCollection
+    }
 
-    allUser: async() => {
-        return await usersCollection.find({});
-    },
+    allUser = async () => {
+        return await this.coll.find({});
+    }
 
-    userById: async (id) => {
+    /**
+     * @description this method is used to find a user by key { 'username', 'email', 'id' } and value
+     * @param {string} key 
+     * @param {string} value
+     * @returns {Boolean} true if user found, false otherwise
+     */
+    findUser = async (key, value) => {
+        const keys = ['email', 'username', 'id']
 
-        let user = await usersCollection.findOne({id})
-
-        if(!user){
-            throw new Error();
+        // check if the key is valid
+        if(!keys.includes(key)){
+            return null 
         }
 
+        // for valid keys, find the user by key
+        const user = await this.coll.findOne({[key] : value})
         return user
-    },
+    }
 
-    verifyUser: async (data) => {
+    verifyUser = async (data) => {
         const {email, password} = data;
 
         // find the user by email
-        const user = await usersCollection.findOne({email})
+        const user = await this.findUser('email', email)
 
 
         if(!user || !verifyEncryptedText(password, user?.password)){
@@ -60,81 +71,32 @@ const usersModal = {
             status: true,
             user: user
         }
-    },
+    }
 
-    validateUserData(data, authType) {
-        //user should provide the name, email, password, username
-        const {name, email, password} = data;
-
-        if(!email){
-            return {
-                status: false,
-                msg: 'please provide Email',
-            }
-        } else if(!password) {
-            return {
-                status: false,
-                msg: 'please provide Password'
-            }
-        } else if(authType==='register' && !name) {
-            return {
-                status: false,
-                msg: 'please provide your Name'
-            }
-        }
-
-        return {
-            status: true,
-            msg: 'validated data success'
-        }
-    },
-
-    uniqueUserByEmail : async (email) => {
-        const user = await usersCollection.findOne({email})
-        return Boolean(user)
-    },
-
-    uniqueUserByUsername: async(username) => {
-        const user = await usersCollection.findOne({username})
-        return Boolean(user)
-    },
-
-    addUser: async (userdata) => {
+    addUser = async (userdata) => {
         userdata.id = randomUUID()
         
         // hashed password
         userdata.password =  encryptText(userdata.password)
         
-        const doc = new usersCollection({...userdata})
+        const doc = new this.coll({...userdata})
         const userData = await doc.save()
 
-        return userData;    // RETURN THE NEW USER DATA
-    },
+        return Boolean(userData);    // RETURN TRUE IF USER ADDED SUCCESSFULLY
+    }
 
-    modifyUser: async (userId, modifiedObj) => {
-        const user = usersCollection.findOne({id:userId})
+    modifyUser = async (userId, modifiedObj) => {
+        const user = await this.findUser('id', userId)
 
         if(!user){
             throw new AppError(400, 'user not found!')
         }
 
-        const updatedUser = await usersCollection.updateOne({...modifiedObj})
+        const updatedUser = await this.coll.updateOne({ 'id': userId }, {...modifiedObj})
 
         return updatedUser;   // RETURN THE MODIFIED USER DATA
-    },
+    }
 
-    // deleteUser(userId){
-    //     const uIndex = this.users.findIndex(u => u.id === userId)
+};
 
-    //     if(uIndex < 0){
-    //         throw new AppError(400, 'user not found!')
-    //     }
-
-    //     this.users = this.users.filter(u => u.id !== userId)
-    //     return true;
-    // }
-
-}
-
-export default usersModal;
 

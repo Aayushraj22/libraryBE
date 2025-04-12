@@ -26,4 +26,27 @@ const isAuthenticUserMiddleware = (req,res,next) => {
 
 }
 
-export {isAuthenticUserMiddleware}
+const validateUserData = ( req, res, next ) => {
+    const endpoint = req.path 
+    const { name, email, password } = req.body 
+
+    if( !email || !password || !password.trim() ) {
+        return res.status(400).json({
+            status: 400,
+            message: 'Invalid credentials',
+        })
+    }
+
+    // signup user need to provide name
+    if( endpoint === 'register' && ( !name || !name.trim() ) ) {
+        return res.status(400).json({
+            status: 400,
+            message: 'provide your name',
+        })
+    }
+    
+    // everything fine then move to the next middleware
+    next()
+}
+
+export { isAuthenticUserMiddleware, validateUserData}

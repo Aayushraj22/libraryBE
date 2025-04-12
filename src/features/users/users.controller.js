@@ -1,22 +1,27 @@
-import { generateToken, tryCatch, verifyToken } from "../../utility.js";
-import usersModal from "./users.modal.js";
+import { generateToken, verifyToken } from "../../utility.js";
+import UserModel from "./users.modal.js";
 
-const usersController = {
+const { findUser, verifyUser, addUser } = new UserModel()
 
-    getUserById: async (req, res) => {
+export default class UserController {
+
+    getUserById = async (req, res) => {   
         const {id} = req.params  // user's Id
 
         try {
-            const user =  await usersModal.userById(id)
+            const user =  await findUser('id', id)
+            if(!user){
+                return res.status(404).send('User Not Found')
+            }
             res.status(200).send(user)
         } catch (error) {
             res.status(404).send('User Not Found')
         }
-    },
+    }
 
-    getAllUser: async (req,res) => {
+    getAllUser = async (req,res) => {
         try {
-            const allUser = await usersModal.allUser()
+            const allUser = await allUser()
             res.status(200).send(allUser)
         } catch (error) {
             res.status(500).json({
@@ -24,24 +29,14 @@ const usersController = {
                 message: 'Internal server error'
             })
         }
-    },
+    }
 
-    registerUser: async (req,res) => {
+    registerUser = async (req,res) => {
         const data = req.body;
-        
-        // validate the user data
-        const validation = usersModal.validateUserData(data, 'register');
-        
-        if(!validation.status){
-            return res.status(400).json({
-                status: 400,
-                message: validation.msg
-            })
-        }
         
         try {
             // checking for unique email address
-            const user = await usersModal.uniqueUserByEmail(data.email)
+            const user = await findUser('email', data.email)
             if(user){
                 return res.status(400).json({
                     status: 400,
@@ -50,9 +45,13 @@ const usersController = {
             }
             
             // add user data
-            const doc = await usersModal.addUser(data)
+            const isRegistered = await addUser(data)
 
-            res.status(201).send(doc)
+            res.status(201).json({
+                status: 201,
+                message: 'User registered successfully',
+                userId: isRegistered.id,
+            })
             
         } catch (error) {
             // console.log(error)
@@ -61,24 +60,14 @@ const usersController = {
                 message: 'Internal server error'
             })
         }
-    },
+    }
 
-    loginUser: async (req,res) => {
+    loginUser = async (req,res) => {
         const data = req.body;
-
-        // validate the user data
-        const validation = usersModal.validateUserData(data);
-        
-        if(!validation.status){
-            return res.status(400).json({
-                status: 400,
-                message: validation.msg
-            });
-        }
 
         try {
             // verify the user
-            const verify = await usersModal.verifyUser(data)
+            const verify = await verifyUser(data)
 
             if(!verify.status){
                 return res.status(400).json({
@@ -106,9 +95,9 @@ const usersController = {
                 message: 'Internal server error'
             })
         }
-    },
+    }
 
-    userLoginStatus: async (req,res) => {
+    userLoginStatus = async (req,res) => {
 
         // check for the cookie
         const token = req?.cookies?.token
@@ -141,13 +130,12 @@ const usersController = {
                 message: 'unAuthorized'
             })
         }
-    },
+    }
 
-    signOut: async (req, res) => {
+    signOut = async (req, res) => {
         res.clearCookie('token', {sameSite: 'None', secure: true})
         res.clearCookie('uid', {sameSite: 'None', secure: true})
         res.status(200).send('logout successfully')
     }
-}
 
-export default usersController;
+}

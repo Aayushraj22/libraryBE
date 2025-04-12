@@ -1,25 +1,25 @@
 import Router from 'express'
-import usersController from './users.controller.js'
+import UserController from './users.controller.js'
 import { userPurchaseRouter } from '../purchase/purchase.route.js'
-import { isAuthenticUserMiddleware } from '../../middleware/userMiddleware.js'
+import { isAuthenticUserMiddleware, validateUserData } from '../../middleware/userMiddleware.js'
 
-const {registerUser, loginUser, signOut, getUserById, userLoginStatus} = usersController
 const router = Router()
+const {registerUser, loginUser, signOut, getUserById, userLoginStatus, getAllUser} = new UserController()
 
 // ALL USER, BUT NOT BE USED GENERALLY
 router.route('/')
-.get(usersController.getAllUser)
+.get(getAllUser)
 
 // OWNED BOOKS ROUTE
 router.use('/myBooks', userPurchaseRouter)
 
 // ADD NEW USER
 router.route('/register')
-.post(registerUser)
+.post( validateUserData, registerUser )
 
 // LOGIN USER
 router.route('/login')
-.post(loginUser)
+.post( validateUserData, loginUser )
 
 // USER AUTH STATUS
 router.route('/auth-status')
