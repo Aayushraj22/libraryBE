@@ -21,14 +21,14 @@ async function tryCatch (cb, next) {
 
 // sign a user data and returing token
 function generateToken(userdata) {
-    const token = jwt.sign(userdata,process.env.SECRET_KEY,{expiresIn: '1h'})
+    const token = jwt.sign( userdata, process.env.SECRET_KEY, { expiresIn: '1h' } )
 
     return token;
 }
 
 function verifyToken(token) {
     try {
-        const payload = jwt.verify(token, process.env.SECRET_KEY)
+        const payload = getPayload(token)
         return payload;
     } catch (error) {
         if(error.message === 'Network Error') {
@@ -46,7 +46,7 @@ function verifyToken(token) {
 }
 
 function getPayload(token) {
-    return jwt.verify(token.process.env.SECRET_KEY)
+    return jwt.verify(token, process.env.SECRET_KEY)
 }
 
 

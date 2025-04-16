@@ -1,138 +1,82 @@
-import { generateToken, verifyToken } from "../../utility.js";
+import AppError from "../../middleware/errorHandler.middleware.js";
+import { generateToken, tryCatch, verifyToken } from "../../utility.js";
 import UserModel from "./users.modal.js";
 
 const { findUser, verifyUser, addUser } = new UserModel()
 
 export default class UserController {
 
-    getUserById = async (req, res) => {   
+    getUserById = async ( req, res, next ) => {   
         const {id} = req.params  // user's Id
 
-        try {
-            const user =  await findUser('id', id)
-            if(!user){
-                return res.status(404).send('User Not Found')
-            }
-            res.status(200).send(user)
-        } catch (error) {
-            res.status(404).send('User Not Found')
-        }
+        const user = await tryCatch( () => findUser('id', id), next )
+        res.status(200).send(user)
     }
 
-    getAllUser = async (req,res) => {
-        try {
-            const allUser = await allUser()
-            res.status(200).send(allUser)
-        } catch (error) {
-            res.status(500).json({
-                status: 500,
-                message: 'Internal server error'
-            })
-        }
+    getAllUser = async ( req, res, next ) => {
+        const allUser = await tryCatch( () => allUser(), next )
+        res.status(200).send(allUser)
     }
 
-    registerUser = async (req,res) => {
-        const data = req.body;
-        
-        try {
-            // checking for unique email address
-            const user = await findUser('email', data.email)
-            if(user){
-                return res.status(400).json({
-                    status: 400,
-                    message: 'Email already used'
-                })
-            }
-            
-            // add user data
-            const isRegistered = await addUser(data)
-
-            res.status(201).json({
-                status: 201,
-                message: 'User registered successfully',
-                userId: isRegistered.id,
-            })
-            
-        } catch (error) {
-            // console.log(error)
-            res.status(500).json({
-                status: 500,
-                message: 'Internal server error'
-            })
-        }
-    }
-
-    loginUser = async (req,res) => {
+    registerUser = async ( req, res, next ) => {
         const data = req.body;
 
-        try {
-            // verify the user
-            const verify = await verifyUser(data)
-
-            if(!verify.status){
-                return res.status(400).json({
-                    status: 400,
-                    message: verify.msg
-                });
-            }
-
-            const token = generateToken({userId: verify.user.id})
-
-
-            // set the cookie named 'token'
-            res.cookie('token', token, { maxAge: 1800000, sameSite: 'None', secure: true })   // 30 min 
-            res.cookie('uid', verify.user.id, {maxAge: 1800000, sameSite: 'None', secure: true} )
-            res.status(200).json({
-                status: 200, 
-                message: 'success Login', 
-                uid: verify.user.id,
-            })
-
-        } catch (error) {
-            // console.log('login error: ',error)
-            return res.status(500).json({
-                status: 500,
-                message: 'Internal server error'
-            })
-        }
+        const user = await tryCatch(() => addUser(data), next)
+        res.status(201).json({
+            status: 201,
+            message: 'successfully registered',
+            uid: user?.id,
+        })
     }
 
-    userLoginStatus = async (req,res) => {
+    loginUser = async ( req, res, next ) => {
+        const data = req.body;
+
+        const verification = await tryCatch( () => verifyUser(data), next )
+
+        const token = generateToken({
+            uid: verification.user.id
+        })
+
+        // set the cookie named 'token'
+        res.cookie('token', token, { maxAge: 3600000, sameSite: 'None', secure: true })   // 1 hr  
+        res.cookie('uid', verification.user.id, {maxAge: 3600000, sameSite: 'None', secure: true} )
+        res.status(200).json({
+            status: 200, 
+            message: 'successfully sign-in', 
+            uid: verification.user.id,
+        })
+    }
+
+    userLoginStatus = async ( req, res, next ) => {
 
         // check for the cookie
         const token = req?.cookies?.token
 
         if(!token) {
-            return res.status(401).json({
-                status: 401,
-                message: 'unAuthorized',
-            })
+            return next(new AppError(401, 'unAuthorized'))
         }
 
         // in token presence
         // verify the token
         const obj = verifyToken(token);
         
-        if(obj.status === 401 || obj.status === 500){
-            return res.status(401).json({...obj})
+        if( !obj?.uid ){
+            return next(new AppError(obj?.status, obj?.message))
         }
         
         // if none of the above run then obj contains payload
-        
         if(obj.uid === req.uid) {
             res.status(200).json({
                 status: 200,
                 message: 'authorized',
             })
         } else {
-            res.status(401).json({
-                status: 401,
-                message: 'unAuthorized'
-            })
+            next(new AppError(401, 'unAuthorized'))
         }
     }
 
-    signOut = async (req, res) => {
+    signOut = async ( req, res ) => {
         res.clearCookie('token', {sameSite: 'None', secure: true})
         res.clearCookie('uid', {sameSite: 'None', secure: true})
         res.status(200).send('logout successfully')

@@ -1,5 +1,5 @@
 export default class AppError extends Error{
-    constructor(status,msg) {
+    constructor( status = 500, msg = 'Internal server error') {
         super(msg)
         this.status = status
     }
@@ -7,9 +7,10 @@ export default class AppError extends Error{
 }
 
 const errorHandlerMiddleware = (error, req, res, next) => {
-    const sts = error.status || 500
-    const msg = error.message || 'Internal server error'
-    res.status(sts).send(msg)
+    res.status(error.status).json({
+        status: error.status,
+        message: error.message
+    })
 }
 
 export {AppError, errorHandlerMiddleware}

@@ -45,11 +45,16 @@ export default class UserModel {
 
         // check if the key is valid
         if(!keys.includes(key)){
-            return null 
+            throw new AppError(400, 'Invalid key')
         }
 
         // for valid keys, find the user by key
         const user = await this.coll.findOne({[key] : value})
+        
+        if(!user){
+            throw new AppError(404, 'user not found')
+        }
+
         return user
     }
 
@@ -59,12 +64,8 @@ export default class UserModel {
         // find the user by email
         const user = await this.findUser('email', email)
 
-
         if(!user || !verifyEncryptedText(password, user?.password)){
-            return {
-                status: false,
-                msg: 'Invalid Credentials',
-            };
+            throw new AppError(400, 'Invalid Credentials')
         }
 
         return {
@@ -74,6 +75,12 @@ export default class UserModel {
     }
 
     addUser = async (userdata) => {
+        // checking for unique email address
+        const user = await findUser('email', data.email)
+        if(user){
+            throw new AppError(400, 'email already used')
+        }
+
         userdata.id = randomUUID()
         
         // hashed password
@@ -82,7 +89,7 @@ export default class UserModel {
         const doc = new this.coll({...userdata})
         const userData = await doc.save()
 
-        return Boolean(userData);    // RETURN TRUE IF USER ADDED SUCCESSFULLY
+        return userData    // return user object
     }
 
     modifyUser = async (userId, modifiedObj) => {
