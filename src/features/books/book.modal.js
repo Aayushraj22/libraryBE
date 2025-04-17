@@ -9,13 +9,13 @@ const bookSchema = new Schema({
   name: {type: String,require: true,},
   authors: [{
     type: Schema.Types.ObjectId,
-    required: true,
+    require: true,
     ref: 'authors',
   }],
-  price: {type: Number, required: true},
-  publishedAt: {type: Number, required: true},
-  description: {type: String, required: true},
-  imgurl: {type: String, required: true},
+  price: {type: Number, require: true},
+  publishedAt: {type: Number, require: true},
+  description: {type: String, require: true},
+  imgurl: {type: String, require: true},
   ratings: {
     type: Map,
     of: String

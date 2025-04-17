@@ -10,11 +10,17 @@ export default class UserController {
         const {id} = req.params  // user's Id
 
         const user = await tryCatch( () => findUser('id', id), next )
+        if(!user) {
+            return
+        }
         res.status(200).send(user)
     }
 
     getAllUser = async ( req, res, next ) => {
         const allUser = await tryCatch( () => allUser(), next )
+        if(!allUser) {
+            return
+        }
         res.status(200).send(allUser)
     }
 
@@ -22,6 +28,9 @@ export default class UserController {
         const data = req.body;
 
         const user = await tryCatch(() => addUser(data), next)
+        if(!user) {
+            return
+        }
         res.status(201).json({
             status: 201,
             message: 'successfully registered',
@@ -33,9 +42,12 @@ export default class UserController {
         const data = req.body;
 
         const verification = await tryCatch( () => verifyUser(data), next )
+        if(!verification) {
+            return
+        }
 
         const token = generateToken({
-            uid: verification.user.id
+            uid: verification?.user?.id
         })
 
         // set the cookie named 'token'
