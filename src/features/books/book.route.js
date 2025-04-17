@@ -1,35 +1,37 @@
 import {Router} from 'express'
-import bookController from './book.controller.js'
-import { errorHandlerMiddleware } from '../../middleware/errorHandler.middleware.js'
-
+import BookController from './book.controller.js'
 import purchaseRouter from '../purchase/purchase.route.js'
+import { bookDataValidation } from '../../middleware/bookMiddleware.js'
+
+const { getBooks, getBook, searchBooks, top5bookByFeatures, addBook, updateBook, deleteBook} = new BookController()
 
 const router = Router()
 
 // BOOKS ROUTE : 'api/v1/books'
 
 router.route('/')
-.get(bookController.getAllBooks)    // GET ALL BOOKS
-.post(bookController.addABook)      // ADD A NEW BOOK
+.get(getBooks)    // GET ALL BOOKS
 
 router.route('/search')
-.get(bookController.searchBook)     // SEARCH FOR BOOK
+.get(searchBooks)     // SEARCH FOR BOOK BY NAME AND AUTHOR NAME
 
 //  PURCHASE ROUTE WILL BE LOOKED BY IT
 router.use('/:id/purchase', purchaseRouter)
 
 router.route('/:id')
-.get(bookController.getABook)   // GET A BOOK BY ID
-.put(bookController.updateABook)     // UPDATE THE BOOK 
-.delete(bookController.deleteABook)     // DELETE THE BOOK
-
+.get(getBook)   // GET A BOOK BY ID
 
 router.route('/top5/:category')
-.get(bookController.top5bookByFeatures)
+.get(top5bookByFeatures)
 
+// routes only for admin 
+router.route('/')
+.post(bookDataValidation, addBook)      // ADD A NEW BOOK
 
-// all unknown route is handled by this function
-router.use(errorHandlerMiddleware)
+router.route('/:id')
+.put(updateBook)     // UPDATE THE BOOK 
+.delete(deleteBook)     // DELETE THE BOOK
+
 
 
 export default router
