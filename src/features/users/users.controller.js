@@ -78,7 +78,7 @@ export default class UserController {
         }
         
         // if none of the above run then obj contains payload
-        if(obj.uid === req.uid) {
+        if(obj.uid === req?.cookies?.uid) {
             res.status(200).json({
                 status: 200,
                 message: 'authorized',
