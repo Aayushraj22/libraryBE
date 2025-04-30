@@ -49,9 +49,9 @@ export default class BookModel {
     this.coln = booksCollection
   }
 
-  allBooks = async ( page ) => {
+  allBooks = async ( page, genre ) => {
     
-    const listSize = await this.coln.countDocuments()
+    let listSize = genre ? await this.coln.countDocuments({genre}) : await this.coln.countDocuments({}) // count the number of books in the collection
     let list = undefined;
 
     if(page){
@@ -59,7 +59,10 @@ export default class BookModel {
       const toSkipCount = (page - 1)*10
 
       // limit the books doc by 10 only, now only 10 books can be fetched from any starting point
-      list =  await this.coln.find({}).skip(toSkipCount).limit(10).populate({
+      list = genre ? await this.coln.find({genre}).skip(toSkipCount).limit(10).populate({
+        path: 'authors',
+        select: 'name'
+      }) : await this.coln.find({}).skip(toSkipCount).limit(10).populate({
         path: 'authors',
         select: 'name'
       })

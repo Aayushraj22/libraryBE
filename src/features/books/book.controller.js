@@ -7,9 +7,9 @@ const bookModal = new BookModel()
 
 export default class BookController {
     getBooks = async (req, res, next) => {
-        const {page} = req.query
+        const { page, genre } = req.query
 
-        const allBooks = await tryCatch(() => bookModal.allBooks(page), next)
+        const allBooks = await tryCatch(() => bookModal.allBooks( page, genre ), next)
 
         if(allBooks)
             res.status(200).send(allBooks)
